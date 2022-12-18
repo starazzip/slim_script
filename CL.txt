@@ -135,7 +135,9 @@ function StartMonitorErrorMsg() {
             ErrorMsgObserver.disconnect();
             ErrorMsgObserver = null
         }
-        ReLoginWebsite();
+	setTimeout(function() {
+          ReLoginWebsite();
+        }, 2000);
     })
     ErrorMsgObserver.observe(elemToObserve, {
  				childList: true,
