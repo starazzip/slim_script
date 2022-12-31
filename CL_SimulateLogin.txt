@@ -1,0 +1,174 @@
+// ==UserScript==
+// @name     [CL] SIMULATE LOGIN
+// @version  1
+// @grant    GM.xmlHttpRequest
+// ==/UserScript==
+var host = "https://www.cali333.net" // < 如果網址失效請改這個
+var username = "帳號"
+var password = "密碼"
+var room = "桌號"
+
+//----------------------------------
+
+var DragonObserver = null
+var RefreshObserver = null
+var ErrorMsgObserver = null
+
+InsertButton()
+document.onreadystatechange = function() {
+    OnWebStateChanged()
+}
+
+function InsertButton() {
+    var zNode = document.createElement('div');
+    zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
+    zNode.setAttribute('id', 'myContainer');
+    var first = document.body.firstChild;
+    document.body.insertBefore(zNode, first);
+    document.getElementById("myButton").addEventListener("click", ButtonClickAction, false);
+
+}
+
+function OnWebStateChanged() {
+    if (document.readyState === 'complete') {
+        if (RefreshObserver != null) {
+            RefreshObserver.disconnect();
+            RefreshObserver = null
+        }
+        RefreshObserver = new MutationObserver((mutations) => {
+            mutations.forEach(function(mutation) {
+               mutation.addedNodes.forEach(function(addn) {    
+                 
+                    if (addn === undefined) {
+                        return;
+                    }
+                 		
+                    if (addn.id === 'loginPage') {
+                        setTimeout(function() {
+                            ReLoginWebsite();
+                        }, 3000);
+                    }         		
+                });
+                mutation.removedNodes.forEach(function(n) {
+                    if (n === undefined) {
+                        return;
+                    }
+                    if (n.id === 'dealerImage') {
+                        setTimeout(function() {
+                            NavigateToDragon();
+                        }, 3000);
+                    }
+                })
+            })
+        })
+
+        RefreshObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: false,
+            characterData: false,
+        });
+    }
+}
+
+function NavigateToDragon() {
+    if (DragonObserver != null) {
+        DragonObserver.disconnect();
+        DragonObserver = null
+    }
+    DragonObserver = new MutationObserver((mutations) => {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(n) {
+                if (n.data) {
+                    let roomID = room
+                    if (n.data.includes(" " + roomID)) {
+                        setTimeout(function() {
+                            enterRoom();
+                        }, 2000);
+                    }
+                }
+            })
+        })
+    })
+
+    DragonObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: false,
+        characterData: false,
+    });
+
+    let path = window.location.href.split("/");
+    path.pop(); // remove the last
+    path.push("DragonHall");
+    window.location.href = path.join("/");
+}
+
+// simulate click evnet
+function enterRoom() {
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent("click", true, false);
+    console.log(room);
+
+    for (const div of document.querySelectorAll('div')) {
+         if (div === undefined || div.classList === undefined) {
+            continue;
+        }
+     		if(div.classList != 'tableName')
+        {
+        	  continue;
+        }  
+        if (div.textContent.includes(" " + room)) {
+                    
+            div.dispatchEvent(evt);
+            if (RefreshObserver != null) {
+                RefreshObserver.disconnect();
+                RefreshObserver = null
+            }
+            if (DragonObserver != null) {
+                DragonObserver.disconnect();
+                DragonObserver = null
+            }
+            StartMonitorErrorMsg();
+            return;
+        }
+    }
+    
+}
+
+function StartMonitorErrorMsg() {
+    var elemToObserve = document.getElementById('popupLayer');
+    if (ErrorMsgObserver != null) {
+        ErrorMsgObserver.disconnect();
+        ErrorMsgObserver = null
+    }
+    ErrorMsgObserver = new MutationObserver((mutations) => {
+
+        if (ErrorMsgObserver != null) {
+            ErrorMsgObserver.disconnect();
+            ErrorMsgObserver = null
+        }
+         setTimeout(function() {
+          ButtonClickAction();
+        }, 2000);
+    })
+    ErrorMsgObserver.observe(elemToObserve, {
+ 				childList: true,
+        subtree: true,
+        attributes: false,
+        characterData: false,
+    });
+}
+
+function ButtonClickAction(zEvent) {
+    window.location.href = host;
+}
+
+
+function ReLoginWebsite() {
+  document.getElementById("mLoginInput").value = username;
+  document.getElementById("mPasswordInput").value = password;
+  var evt = document.createEvent ("HTMLEvents");
+  evt.initEvent ("click", true, true);
+  document.getElementById('loginBtn').dispatchEvent (evt);
+}
