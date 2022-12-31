@@ -10,165 +10,195 @@ var room = "桌號"
 
 //----------------------------------
 
-var DragonObserver = null
-var RefreshObserver = null
-var ErrorMsgObserver = null
+var DragonObserver = null;
+var RefreshObserver = null;
+var ErrorMsgObserver = null;
 
-InsertButton()
-document.onreadystatechange = function() {
-    OnWebStateChanged()
-}
+const loginFaileThreshold = 1000 * 60;
+const goDragonFaileThreshold = 1000 * 20;
+var LoginFailedMethod;
+var GoToDragonFailedMethod;
+InsertButton();
+document.onreadystatechange = function () {
+  OnWebStateChanged();
+};
 
 function InsertButton() {
-    var zNode = document.createElement('div');
-    zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
-    zNode.setAttribute('id', 'myContainer');
-    var first = document.body.firstChild;
-    document.body.insertBefore(zNode, first);
-    document.getElementById("myButton").addEventListener("click", ButtonClickAction, false);
-
+  var zNode = document.createElement('div');
+  zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
+  zNode.setAttribute('id', 'myContainer');
+  var first = document.body.firstChild;
+  document.body.insertBefore(zNode, first);
+  document
+    .getElementById('myButton')
+    .addEventListener('click', GoLoginPage, false);
 }
 
 function OnWebStateChanged() {
-    if (document.readyState === 'complete') {
-        if (RefreshObserver != null) {
-            RefreshObserver.disconnect();
-            RefreshObserver = null
-        }
-        RefreshObserver = new MutationObserver((mutations) => {
-            mutations.forEach(function(mutation) {
-               mutation.addedNodes.forEach(function(addn) {    
-                 
-                    if (addn === undefined) {
-                        return;
-                    }
-                 		
-                    if (addn.id === 'loginPage') {
-                        setTimeout(function() {
-                            ReLoginWebsite();
-                        }, 3000);
-                    }         		
-                });
-                mutation.removedNodes.forEach(function(n) {
-                    if (n === undefined) {
-                        return;
-                    }
-                    if (n.id === 'dealerImage') {
-                        setTimeout(function() {
-                            NavigateToDragon();
-                        }, 3000);
-                    }
-                })
-            })
-        })
-
-        RefreshObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: false,
-            characterData: false,
-        });
+  if (document.readyState === 'complete') {
+    if (RefreshObserver != null) {
+      RefreshObserver.disconnect();
+      RefreshObserver = null;
     }
+    RefreshObserver = new MutationObserver(mutations => {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (addn) {
+          if (addn === undefined) {
+            return;
+          }
+
+          if (addn.id === 'loginPage') {
+            setTimeout(function () {
+              ReLoginWebsite();
+            }, 3000);
+          }
+        });
+        mutation.removedNodes.forEach(function (n) {
+          // console.log(n)
+          if (n === undefined) {
+            return;
+          }
+          if (n.id === 'loginPage') {
+            console.log('cancel login faile method');
+            clearTimeout(LoginFailedMethod);
+            setTimeout(function () {
+              console.log('NavigateToDragon');
+              NavigateToDragon();
+            }, 3000);
+          }
+        });
+      });
+    });
+
+    RefreshObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: false,
+      characterData: false,
+    });
+  }
 }
 
 function NavigateToDragon() {
-    if (DragonObserver != null) {
-        DragonObserver.disconnect();
-        DragonObserver = null
-    }
-    DragonObserver = new MutationObserver((mutations) => {
-        mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(n) {
-                if (n.data) {
-                    let roomID = room
-                    if (n.data.includes(" " + roomID)) {
-                        setTimeout(function() {
-                            enterRoom();
-                        }, 2000);
-                    }
-                }
-            })
-        })
-    })
-
-    DragonObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: false,
-        characterData: false,
+  if (DragonObserver != null) {
+    DragonObserver.disconnect();
+    DragonObserver = null;
+  }
+  DragonObserver = new MutationObserver(mutations => {
+    mutations.forEach(function (mutation) {
+      mutation.addedNodes.forEach(function (n) {
+        if (n.data) {
+          let roomID = room;
+          if (n.data.includes(' ' + roomID)) {
+            setTimeout(function () {
+              console.log('cancel Go Dragon faile method');
+              clearTimeout(GoToDragonFailedMethod);
+              enterRoom();
+            }, 2000);
+          }
+        }
+      });
     });
+  });
 
-    let path = window.location.href.split("/");
-    path.pop(); // remove the last
-    path.push("DragonHall");
-    window.location.href = path.join("/");
+  DragonObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: false,
+    characterData: false,
+  });
+
+  var evt = document.createEvent('HTMLEvents');
+  evt.initEvent('click', true, true);
+  document.getElementsByClassName('DRAGON_HALL')[0].dispatchEvent(evt);
+  GoToDragonFailedMethod = setTimeout(GoLoginPage, goDragonFaileThreshold);
 }
 
 // simulate click evnet
 function enterRoom() {
-    var evt = document.createEvent("HTMLEvents");
-    evt.initEvent("click", true, false);
-    console.log(room);
+  var evt = document.createEvent('HTMLEvents');
+  evt.initEvent('click', true, false);
+  console.log(room);
 
-    for (const div of document.querySelectorAll('div')) {
-         if (div === undefined || div.classList === undefined) {
-            continue;
-        }
-     		if(div.classList != 'tableName')
-        {
-        	  continue;
-        }  
-        if (div.textContent.includes(" " + room)) {
-                    
-            div.dispatchEvent(evt);
-            if (RefreshObserver != null) {
-                RefreshObserver.disconnect();
-                RefreshObserver = null
-            }
-            if (DragonObserver != null) {
-                DragonObserver.disconnect();
-                DragonObserver = null
-            }
-            StartMonitorErrorMsg();
-            return;
-        }
+  for (const div of document.querySelectorAll('div')) {
+    if (div === undefined || div.classList === undefined) {
+      continue;
     }
-    
+    if (div.classList != 'tableName') {
+      continue;
+    }
+    if (div.textContent.includes(' ' + room)) {
+      div.dispatchEvent(evt);
+      if (RefreshObserver != null) {
+        RefreshObserver.disconnect();
+        RefreshObserver = null;
+      }
+      if (DragonObserver != null) {
+        DragonObserver.disconnect();
+        DragonObserver = null;
+      }
+      StartMonitorErrorMsg();
+      return;
+    }
+  }
 }
 
 function StartMonitorErrorMsg() {
-    var elemToObserve = document.getElementById('popupLayer');
-    if (ErrorMsgObserver != null) {
-        ErrorMsgObserver.disconnect();
-        ErrorMsgObserver = null
-    }
-    ErrorMsgObserver = new MutationObserver((mutations) => {
-
-        if (ErrorMsgObserver != null) {
-            ErrorMsgObserver.disconnect();
-            ErrorMsgObserver = null
+  if (ErrorMsgObserver != null) {
+    ErrorMsgObserver.disconnect();
+    ErrorMsgObserver = null;
+  }
+  ErrorMsgObserver = new MutationObserver(mutations => {
+    mutations.forEach(function (mutation) {
+      mutation.addedNodes.forEach(function (n) {
+        if (n === undefined) {
+          return;
         }
-         setTimeout(function() {
-          ButtonClickAction();
+        var popup = n.classList.contains('inTablePopup');
+        var popupMsg = n.classList.contains('confirmMessagePopup');
+        if (!popup && !popupMsg) return;
+        console.log('re enter room');
+        if (ErrorMsgObserver != null) {
+          ErrorMsgObserver.disconnect();
+          ErrorMsgObserver = null;
+        }
+        setTimeout(function () {
+          const sureBtns = document.getElementsByClassName('confirm');
+          if (sureBtns.length > 0) {
+            var clickSureEvent = document.createEvent('HTMLEvents');
+            clickSureEvent.initEvent('click', true, true);
+            sureBtns[0].dispatchEvent(clickSureEvent);
+          }
+          setTimeout(function () {
+            var evt = document.createEvent('HTMLEvents');
+            evt.initEvent('click', true, true);
+            document
+              .getElementsByClassName('HOTGAME_HALL')[0]
+              .dispatchEvent(evt);
+            setTimeout(NavigateToDragon, 5000);
+          }, 2000);
         }, 2000);
-    })
-    ErrorMsgObserver.observe(elemToObserve, {
- 				childList: true,
-        subtree: true,
-        attributes: false,
-        characterData: false,
+      });
     });
+  });
+  ErrorMsgObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: false,
+    characterData: false,
+  });
 }
 
-function ButtonClickAction(zEvent) {
-    window.location.href = host;
+function GoLoginPage(zEvent) {
+  window.location.href = host;
 }
-
 
 function ReLoginWebsite() {
-  document.getElementById("mLoginInput").value = username;
-  document.getElementById("mPasswordInput").value = password;
-  var evt = document.createEvent ("HTMLEvents");
-  evt.initEvent ("click", true, true);
-  document.getElementById('loginBtn').dispatchEvent (evt);
+  document.getElementById('mLoginInput').value = username;
+  document.getElementById('mPasswordInput').value = password;
+  var evt = document.createEvent('HTMLEvents');
+  evt.initEvent('click', true, true);
+  document.getElementById('loginBtn').dispatchEvent(evt);
+  console.log('Login...');
+  LoginFailedMethod = setTimeout(GoLoginPage, loginFaileThreshold);
 }

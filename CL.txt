@@ -7,6 +7,7 @@ var host = "https://www.cali333.net" // < 如果網址失效請改這個
 var username = "帳號"
 var password = "密碼"
 var room = "桌號"
+
 //----------------------------------
 
 var DragonObserver = null
@@ -36,10 +37,25 @@ function OnWebStateChanged() {
         }
         RefreshObserver = new MutationObserver((mutations) => {
             mutations.forEach(function(mutation) {
+               mutation.addedNodes.forEach(function(addn) {
+                    console.log("Add");
+                 		console.log(addn);
+                                
+                    if (addn === undefined) {
+                        return;
+                    }
+                 		
+                    if (addn.id === 'QRCodeImageChild') {
+                        setTimeout(function() {
+                            ReLoginWebsite();
+                        }, 1000);
+                    }         		
+                });
                 mutation.removedNodes.forEach(function(n) {
                     if (n === undefined) {
                         return;
                     }
+                  	console.log("Remove: " + addn.id);
                     if (n.id === 'loginPage') {
                         setTimeout(function() {
                             NavigateToDragon();
@@ -135,7 +151,7 @@ function StartMonitorErrorMsg() {
             ErrorMsgObserver.disconnect();
             ErrorMsgObserver = null
         }
-	setTimeout(function() {
+         setTimeout(function() {
           ReLoginWebsite();
         }, 2000);
     })
@@ -148,8 +164,9 @@ function StartMonitorErrorMsg() {
 }
 
 function ButtonClickAction(zEvent) {
-    ReLoginWebsite()
+     window.location.href =host    
 }
+
 
 function ReLoginWebsite() {
     GM.xmlHttpRequest({
@@ -171,10 +188,14 @@ function ReLoginWebsite() {
             console.log("gut response");
             var session = sessionObj["data"]["sessionId"]
             console.log("session:" + session);
-            window.location.href = host + "?sessionId=" + session
+            window.location.href =host + "?sessionId=" + session;
+            
         },
         onerror: function(error) {
             console.log("error!!  " + error)
+          	setTimeout(function() {
+         			 ReLoginWebsite();
+        		}, 2000);
         }
     });
 }
