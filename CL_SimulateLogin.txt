@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name     [CL] SIMULATE LOGIN
+// @name     CL Optimize
 // @version  1
 // @grant    GM.xmlHttpRequest
 // ==/UserScript==
-var host = "https://www.cali333.net" // < 如果網址失效請改這個
-var username = "帳號"
-var password = "密碼"
-var room = "桌號"
+var host = 'https://www.cali333.net'; // < 如果網址失效請改這個
+var username = '帳號';
+var password = '密碼';
+var room = '桌號';
 
 //----------------------------------
 
@@ -18,6 +18,14 @@ const loginFaileThreshold = 1000 * 60;
 const goDragonFaileThreshold = 1000 * 20;
 var LoginFailedMethod;
 var GoToDragonFailedMethod;
+
+var NeedToRelogin = false;
+const NeedToReloginThreshold = 1000 * 60 * 30;
+
+setTimeout(function () {
+  NeedToRelogin = true;
+}, NeedToReloginThreshold);
+
 InsertButton();
 document.onreadystatechange = function () {
   OnWebStateChanged();
@@ -151,33 +159,12 @@ function StartMonitorErrorMsg() {
   ErrorMsgObserver = new MutationObserver(mutations => {
     mutations.forEach(function (mutation) {
       mutation.addedNodes.forEach(function (n) {
-        if (n === undefined) {
-          return;
-        }
-        var popup = n.classList.contains('inTablePopup');
-        var popupMsg = n.classList.contains('confirmMessagePopup');
-        if (!popup && !popupMsg) return;
-        console.log('re enter room');
-        if (ErrorMsgObserver != null) {
-          ErrorMsgObserver.disconnect();
-          ErrorMsgObserver = null;
-        }
-        setTimeout(function () {
-          const sureBtns = document.getElementsByClassName('confirm');
-          if (sureBtns.length > 0) {
-            var clickSureEvent = document.createEvent('HTMLEvents');
-            clickSureEvent.initEvent('click', true, true);
-            sureBtns[0].dispatchEvent(clickSureEvent);
-          }
-          setTimeout(function () {
-            var evt = document.createEvent('HTMLEvents');
-            evt.initEvent('click', true, true);
-            document
-              .getElementsByClassName('HOTGAME_HALL')[0]
-              .dispatchEvent(evt);
-            setTimeout(NavigateToDragon, 5000);
-          }, 2000);
-        }, 2000);
+        TableEventHandleNodeAdded(n);
+      });
+    });
+    mutations.forEach(function (mutation) {
+      mutation.removedNodes.forEach(function (n) {
+        TableEventHandleNodeRemoved(n);
       });
     });
   });
@@ -187,6 +174,53 @@ function StartMonitorErrorMsg() {
     attributes: false,
     characterData: false,
   });
+}
+function TableEventHandleNodeRemoved(n) {
+ if (n === undefined) {
+    return;
+  }
+  
+  var popup = n.classList.contains('confirmMessagePopup');
+  if (popup) {
+     setTimeout(function () {
+       console.log('kick out window close, and NavigateToDragon')
+   			enterRoom();
+     },2000);
+  }
+}
+function TableEventHandleNodeAdded(n) {
+  if (n === undefined) {
+    return;
+  }
+  
+ // var hotgameReady = n.classList.contains('HOTGAME_HALL') && n.classList.contains('active');
+  var popup = n.classList.contains('inTablePopup');
+  var popupMsg = n.classList.contains('confirmMessagePopup');
+ 
+  /*
+  if(hotgameReady)
+  {
+  	console.log('Hot game ready, go dragon');  
+		NavigateToDragon();
+  }*/
+  
+  if (popup || popupMsg){
+    console.log('Error message popup');  
+    if (NeedToRelogin) {
+      NeedToRelogin = false;
+      GoLoginPage();
+    }else{
+      setTimeout(function () {
+      	const sureBtns = document.getElementsByClassName('confirm');
+      	if (sureBtns.length > 0) {
+          console.log('close sure window')
+        	var clickSureEvent = document.createEvent('HTMLEvents');
+        	clickSureEvent.initEvent('click', true, true);
+        	sureBtns[0].dispatchEvent(clickSureEvent);
+        }
+      }, 2000);
+    }
+  }
 }
 
 function GoLoginPage(zEvent) {
