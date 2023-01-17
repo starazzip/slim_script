@@ -127,7 +127,7 @@ function enterRoom() {
   var evt = document.createEvent('HTMLEvents');
   evt.initEvent('click', true, false);
   console.log(room);
-
+  var roomNotFound = true;
   for (const div of document.querySelectorAll('div')) {
     if (div === undefined || div.classList === undefined) {
       continue;
@@ -136,6 +136,7 @@ function enterRoom() {
       continue;
     }
     if (div.textContent.includes(' ' + room)) {
+	  findRoom = false;
       div.dispatchEvent(evt);
       if (RefreshObserver != null) {
         RefreshObserver.disconnect();
@@ -148,6 +149,10 @@ function enterRoom() {
       StartMonitorErrorMsg();
       return;
     }
+  }
+  if(roomNotFound)
+  {
+	  GoLoginPage();
   }
 }
 
@@ -193,17 +198,9 @@ function TableEventHandleNodeAdded(n) {
     return;
   }
   
- // var hotgameReady = n.classList.contains('HOTGAME_HALL') && n.classList.contains('active');
   var popup = n.classList.contains('inTablePopup');
   var popupMsg = n.classList.contains('confirmMessagePopup');
- 
-  /*
-  if(hotgameReady)
-  {
-  	console.log('Hot game ready, go dragon');  
-		NavigateToDragon();
-  }*/
-  
+
   if (popup || popupMsg){
     console.log('Error message popup');  
     if (NeedToRelogin) {
