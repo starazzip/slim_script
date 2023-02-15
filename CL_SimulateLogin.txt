@@ -8,6 +8,7 @@ var username = '帳號';
 var password = '密碼';
 var room = '桌號';
 
+
 //----------------------------------
 
 var DragonObserver = null;
@@ -33,13 +34,29 @@ document.onreadystatechange = function () {
 
 function InsertButton() {
   var zNode = document.createElement('div');
-  zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
+  zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button><br>
+                     <button id="btn_prepare" type="button">Prepare</button>`;
   zNode.setAttribute('id', 'myContainer');
   var first = document.body.firstChild;
   document.body.insertBefore(zNode, first);
   document
     .getElementById('myButton')
     .addEventListener('click', GoLoginPage, false);
+  
+  document
+    .getElementById('btn_prepare')
+    .addEventListener('click', Prepare, false);
+}
+
+function Prepare()
+{
+  console.log("prepare");
+   if (ErrorMsgObserver != null) {
+    ErrorMsgObserver.disconnect();
+    ErrorMsgObserver = null;
+  }
+    
+  NavigateToDragon()
 }
 
 function OnWebStateChanged() {
@@ -127,7 +144,7 @@ function enterRoom() {
   var evt = document.createEvent('HTMLEvents');
   evt.initEvent('click', true, false);
   console.log(room);
-  var roomNotFound = true;
+
   for (const div of document.querySelectorAll('div')) {
     if (div === undefined || div.classList === undefined) {
       continue;
@@ -136,7 +153,6 @@ function enterRoom() {
       continue;
     }
     if (div.textContent.includes(' ' + room)) {
-	  findRoom = false;
       div.dispatchEvent(evt);
       if (RefreshObserver != null) {
         RefreshObserver.disconnect();
@@ -149,10 +165,6 @@ function enterRoom() {
       StartMonitorErrorMsg();
       return;
     }
-  }
-  if(roomNotFound)
-  {
-	  GoLoginPage();
   }
 }
 
