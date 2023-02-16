@@ -33,8 +33,7 @@ window.addEventListener("DOMContentLoaded", function(event) {
     username = unsafeWindow.username;
     password = unsafeWindow.password;
     room = unsafeWindow.room;
-    console.log(username);
-    console.log(password);
+
     GoGroupFired = false;
     GoRoomFired = false;
     OnWebStateChanged()
