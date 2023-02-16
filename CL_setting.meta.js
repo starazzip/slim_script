@@ -2,7 +2,7 @@
 // @name CL 設定
 // @description CL設定
 // @license MIT
-// @version  0.0.1
+// @version  0.0.2
 // @updateURL https://github.com/starazzip/slim_script/raw/main/HSsetting.meta.js
 // @downloadURL https://github.com/starazzip/slim_script/raw/main/HSsetting.user.js
 // @include *://www.cali111.net/*
