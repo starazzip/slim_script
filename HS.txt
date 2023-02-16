@@ -1,11 +1,15 @@
 // ==UserScript==
 // @name     HS reenter
-// @version  1
+// @version  2.0.0
 // @grant    GM.xmlHttpRequest
+// @updateURL https://github.com/starazzip/slim_script/blob/main/HS.txt
 // ==/UserScript==
-const host = "http://3scasino.com"
-const username = "abc02"
-const password = "aaaa8888"
+
+var host;
+var username;
+var password;
+var room;
+
 
 //------分類(2023/2/14改版後，全部都去"全部遊戲"進入桌)---------
 const TARGET_HALL = 'SEXY_HALL'; //性感 -> 改版後變成全部遊戲，但他們命名還是維持性感
@@ -20,6 +24,13 @@ var GoRoomFired = false;
 InsertButton()
 //"DOMContentLoaded"
 window.addEventListener("DOMContentLoaded", function (event) {
+  console.log(unsafeWindow.host)
+  host = unsafeWindow.host;
+  username =  unsafeWindow.username;
+  password =  unsafeWindow.password;
+  room =  unsafeWindow.room;
+  console.log(username);
+  console.log(password);
   GoGroupFired = false;
   GoRoomFired = false;
   OnWebStateChanged()
