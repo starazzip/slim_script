@@ -11,9 +11,9 @@
 // ==/UserScript==
 
 var host = "http://3scasino.com"
-var username = "azt001"
-var password = "aaaa8888"
-const room = "BC01"
+var username = "帳號"
+var password = "密碼"
+const room = "房號"
 
 
 if (unsafeWindow.host == undefined) {
