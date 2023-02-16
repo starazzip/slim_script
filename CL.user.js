@@ -2,7 +2,7 @@
 // @name CL 系統
 // @description CL 更新
 // @license MIT
-// @version  2.0.0
+// @version  2.0.1
 // @updateURL https://github.com/starazzip/slim_script/raw/main/CL.meta.js
 // @downloadURL https://github.com/starazzip/slim_script/raw/main/CL.user.js
 // @include *://www.cali111.net/*
