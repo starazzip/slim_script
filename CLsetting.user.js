@@ -3,8 +3,8 @@
 // @description CL設定
 // @license MIT
 // @version  0.0.1
-// @updateURL https://github.com/starazzip/slim_script/raw/main/HSsetting.meta.js
-// @downloadURL https://github.com/starazzip/slim_script/raw/main/HSsetting.user.js
+// @updateURL https://github.com/starazzip/slim_script/raw/main/CLsetting.meta.js
+// @downloadURL https://github.com/starazzip/slim_script/raw/main/CLsetting.user.js
 // @include *://www.cali111.net/*
 // @include *://www.cali222.net/*
 // @include *://www.cali333.net/*
