@@ -1,8 +1,11 @@
 // ==UserScript==
 // @name     HS reenter
-// @version  2.0.0
+// @description HS
+// @license MIT
+// @version  1.0.0
+// @match *//3scasino.com*
 // @grant    GM.xmlHttpRequest
-// @updateURL https://raw.githubusercontent.com/starazzip/slim_script/main/HS.txt
+// @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
 
 var host;
