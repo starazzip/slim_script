@@ -18,7 +18,7 @@
 // @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
 
-var host = "http://3scasino.com"
+var host = "https://www.cali555.net/"
 var username = "帳號"
 var password = "密碼"
 const room = "房號"
