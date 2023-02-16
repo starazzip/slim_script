@@ -1,6 +1,9 @@
 // ==UserScript==
-// @name     HS reenter
-// @version  2.0.0
-// @grant    GM.xmlHttpRequest
-// @updateURL https://raw.githubusercontent.com/starazzip/slim_script/main/HS.txt
+// @name HS 系統
+// @description HS
+// @license MIT
+// @version  1.0.0
+// @include *://3scasino.com/*
+// @grant GM.xmlHttpRequest
+// @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==

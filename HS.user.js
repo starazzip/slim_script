@@ -1,13 +1,12 @@
 // ==UserScript==
-// @name     HS reenter
+// @name HS 系統
 // @description HS
 // @license MIT
-// @version  1.0.0
-// @match *//3scasino.com*
-// @grant    GM.xmlHttpRequest
+// @version  2.0.0
+// @include *://3scasino.com/*
+// @grant GM.xmlHttpRequest
 // @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
-
 var host;
 var username;
 var password;
@@ -26,143 +25,145 @@ var GoGroupFired = false;
 var GoRoomFired = false;
 InsertButton()
 //"DOMContentLoaded"
-window.addEventListener("DOMContentLoaded", function (event) {
-  console.log(unsafeWindow.host)
-  host = unsafeWindow.host;
-  username =  unsafeWindow.username;
-  password =  unsafeWindow.password;
-  room =  unsafeWindow.room;
-  console.log(username);
-  console.log(password);
-  GoGroupFired = false;
-  GoRoomFired = false;
-  OnWebStateChanged()
+window.addEventListener("DOMContentLoaded", function(event) {
+    console.log(unsafeWindow.host)
+    host = unsafeWindow.host;
+    username = unsafeWindow.username;
+    password = unsafeWindow.password;
+    room = unsafeWindow.room;
+    console.log(username);
+    console.log(password);
+    GoGroupFired = false;
+    GoRoomFired = false;
+    OnWebStateChanged()
 });
 
 
 function InsertButton() {
-  var zNode = document.createElement('div');
-  zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
-  zNode.setAttribute('id', 'myContainer');
-  var first = document.body.firstChild;
-  document.body.insertBefore(zNode, first);
-  document.getElementById("myButton").addEventListener("click", ButtonClickAction, false);
+    var zNode = document.createElement('div');
+    zNode.innerHTML = `<button id="myButton" type="button">Enter Room</button>`;
+    zNode.setAttribute('id', 'myContainer');
+    var first = document.body.firstChild;
+    document.body.insertBefore(zNode, first);
+    document.getElementById("myButton").addEventListener("click", ButtonClickAction, false);
 
 }
 
 function OnWebStateChanged() {
-  if (RefreshObserver != null) {
-    RefreshObserver.disconnect();
-    RefreshObserver = null
-  }
-  RefreshObserver = new MutationObserver((mutations) => {
-    mutations.forEach(function (mutation) {
+    if (RefreshObserver != null) {
+        RefreshObserver.disconnect();
+        RefreshObserver = null
+    }
+    RefreshObserver = new MutationObserver((mutations) => {
+        mutations.forEach(function(mutation) {
 
-      mutation.removedNodes.forEach(function (n) {
-        if (n === undefined) {
-          return;
-        }
-      });
-      try {
-        if(GoRoomFired)
-          return;
-        if (IsRoomFound(mutation) && GoRoomFired == false) {
-          GoRoomFired = true;
-          console.log('找到房間，兩秒後進入')
-          
-          setTimeout(function () {
-            enterRoom();
-          }, 2000);
-          return;
-        }
-        mutation.addedNodes.forEach(function (nnn) {
-          if (nnn === undefined || nnn.classList === undefined) {
-            return;
-          }
-          if (GoGroupFired == false) {
-            GoGroupFired = true;
-            DelayGoTargetHall(TARGET_HALL, 2000);
-            return;
-          }
+            mutation.removedNodes.forEach(function(n) {
+                if (n === undefined) {
+                    return;
+                }
+            });
+            try {
+                if (GoRoomFired)
+                    return;
+                if (IsRoomFound(mutation) && GoRoomFired == false) {
+                    GoRoomFired = true;
+                    console.log('找到房間，兩秒後進入')
+
+                    setTimeout(function() {
+                        enterRoom();
+                    }, 2000);
+                    return;
+                }
+                mutation.addedNodes.forEach(function(nnn) {
+                    if (nnn === undefined || nnn.classList === undefined) {
+                        return;
+                    }
+                    if (GoGroupFired == false) {
+                        GoGroupFired = true;
+                        DelayGoTargetHall(TARGET_HALL, 2000);
+                        return;
+                    }
+                })
+            } catch (e) {
+                console.log("E!!:" + e)
+            }
+
         })
-      } catch (e) {
-        console.log("E!!:" + e)
-      }
-
     })
-  })
 
-  RefreshObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    characterData: true,
-  });
+    RefreshObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+    });
 }
+
 function IsRoomFound(node) {
-  if (!(typeof node === 'object' && node !== null && 'getAttribute' in node.target))
-    return false;
-  var att = node.target.getAttribute('class')
-  if (att == null)
-    return false;
-  return att.includes('tableItem')
-    && node.target.textContent.includes(' ' + room);
+    if (!(typeof node === 'object' && node !== null && 'getAttribute' in node.target))
+        return false;
+    var att = node.target.getAttribute('class')
+    if (att == null)
+        return false;
+    return att.includes('tableItem') &&
+        node.target.textContent.includes(' ' + room);
 }
+
 function DelayGoTargetHall(hall, delay) {
-  setTimeout(function () {
-    // 在經典要去目標分類
-    console.log('進入目標分類:' + hall);
-    const btn = document.querySelectorAll('[data-hallname="' + hall + '"]');
-    var enterGroup = document.createEvent('HTMLEvents');
-    enterGroup.initEvent('click', true, true);
-    btn[0].dispatchEvent(enterGroup);
-  }, delay);
+    setTimeout(function() {
+        // 在經典要去目標分類
+        console.log('進入目標分類:' + hall);
+        const btn = document.querySelectorAll('[data-hallname="' + hall + '"]');
+        var enterGroup = document.createEvent('HTMLEvents');
+        enterGroup.initEvent('click', true, true);
+        btn[0].dispatchEvent(enterGroup);
+    }, delay);
 }
 
 // simulate click evnet
 function enterRoom() {
-  var evt = document.createEvent("HTMLEvents");
-  evt.initEvent("click", true, false);
-  console.log("enter room: " + room);
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent("click", true, false);
+    console.log("enter room: " + room);
 
-  for (const div of document.querySelectorAll('div')) {
-    if (div === undefined || div.classList === undefined) {
-      continue;
+    for (const div of document.querySelectorAll('div')) {
+        if (div === undefined || div.classList === undefined) {
+            continue;
+        }
+        if (div.classList != 'tableName') {
+            continue;
+        }
+        if (div.textContent.includes(" " + room)) {
+            div.dispatchEvent(evt);
+            console.log("click room button: " + room);
+            if (RefreshObserver != null) {
+                RefreshObserver.disconnect();
+                RefreshObserver = null
+            }
+            return;
+        }
     }
-    if (div.classList != 'tableName') {
-      continue;
-    }
-    if (div.textContent.includes(" " + room)) {
-      div.dispatchEvent(evt);
-      console.log("click room button: " + room);
-      if (RefreshObserver != null) {
-        RefreshObserver.disconnect();
-        RefreshObserver = null
-      }
-      return;
-    }
-  }
 }
 
 function ButtonClickAction(zEvent) {
-  console.log('hi: ' + host + ":10002/AjaxServer/Server.aspx?action=login&hyzh=" + username + "&pwd=" + password)
-  GM.xmlHttpRequest({
-    method: "GET",
-    url: host + ":10002/AjaxServer/Server.aspx?action=login&hyzh=" + username + "&pwd=" + password,
+    console.log('hi: ' + host + ":10002/AjaxServer/Server.aspx?action=login&hyzh=" + username + "&pwd=" + password)
+    GM.xmlHttpRequest({
+        method: "GET",
+        url: host + ":10002/AjaxServer/Server.aspx?action=login&hyzh=" + username + "&pwd=" + password,
 
-    onload: function (response) {
-      var loginResp = JSON.parse(response.responseText)
-      if (loginResp["success"] == null)
-        return;
-      var result = loginResp["success"]
-      if (result)
-        window.location.href = host
-    },
-    onerror: function (error) {
-      console.log("error!!")
-      delay(5000);
-      ButtonClickAction();
+        onload: function(response) {
+            var loginResp = JSON.parse(response.responseText)
+            if (loginResp["success"] == null)
+                return;
+            var result = loginResp["success"]
+            if (result)
+                window.location.href = host
+        },
+        onerror: function(error) {
+            console.log("error!!")
+            delay(5000);
+            ButtonClickAction();
 
-    }
-  });
+        }
+    });
 }
