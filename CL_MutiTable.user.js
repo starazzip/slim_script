@@ -62,7 +62,7 @@ function OnWebStateChanged() {
             if (addn.classList.contains('tableWrap')) {
               clearTimeout(GoToMutiTableFailedMethod);
               HandleTableWrap(addn);
-            }
+            }           
           }
           if (addn.id === 'loginPage') {
             setTimeout(function () {
@@ -130,5 +130,12 @@ function HandleTableWrap(tableWrap) {
       tableWrap.style.height = '100px';
       tableWrap.style.backgroundColor = "#000000"
     }
+    var tableName = tableWrap.querySelector(".tableName");
+    tableName.style.fontSize = '44px';
+    tableName.style.top='50px'
+    
+    var road = tableWrap.querySelector(".Baccarat8MultiTableRoadmap");
+    road.remove();
+
   }, 1000);
 }
