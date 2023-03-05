@@ -1,6 +1,17 @@
 // ==UserScript==
-// @name     CL 多台系統
+// @name     CL 多台系統-測試
+// @description CL 多台系統-測試中
+// @license MIT
 // @version  0.0.1
+// @include *://www.cali111.net/*
+// @include *://www.cali222.net/*
+// @include *://www.cali333.net/*
+// @include *://www.cali444.net/*
+// @include *://www.cali555.net/*
+// @include *://www.cali666.net/*
+// @include *://www.cali777.net/*
+// @include *://www.cali888.net/*
+// @include *://www.cali999.net/*
 // @grant    GM.xmlHttpRequest
 // ==/UserScript==
 //----------------------------------
@@ -19,21 +30,35 @@ const goDragonFaileThreshold = 1000 * 20;
 var LoginFailedMethod;
 var GoToMutiTableFailedMethod;
 
-const NeedToReloginThreshold = 1000 * 60 * 60;
+const NeedToReloginThreshold = 1000 * 60 * 120;
+/*
+GM_addStyle ( `
+    .MultiTableTableName.tableName {
+       -webkit-font-smoothing: none 
+    }
+` );
 
+function GM_addStyle (cssStr) {
+    var D               = document;
+    var newNode         = D.createElement ('style');
+    newNode.textContent = cssStr;
+
+    var targ    = D.getElementsByTagName ('head')[0] || D.body || D.documentElement;
+    targ.appendChild (newNode);
+}
+*/
 setTimeout(function () {
   GoLoginPage(null);
 }, NeedToReloginThreshold);
 
 InsertButton();
-document.onreadystatechange = function () {
-  host = unsafeWindow.host;
-  username = unsafeWindow.username;
-  password = unsafeWindow.password;
-  room = unsafeWindow.room;
+document.onreadystatechange = function () {  
+  host =unsafeWindow.host;
+	username =unsafeWindow.username;
+	password =unsafeWindow.password;
+	room =unsafeWindow.room;
   OnWebStateChanged();
 };
-
 
 function InsertButton() {
   var zNode = document.createElement('div');
@@ -146,14 +171,19 @@ function StartMonitorTotal(tableWrap) {
   let zNode = document.createElement('div');
   zNode.setAttribute('id', 'myRound');
 	zNode.style.textAlign = 'left';
+  zNode.style.width ='100px'
   zNode.style.left = '41px';
   zNode.style.color = "#FF0000"
+  zNode.style.textAlign= 'center';
+  zNode.style.backgroundColor = "#000000"
   zNode.style.fontSize = '44px'
+   
   tableName.parentNode.append(zNode);
   let totalValueNode = tableWrap.querySelector(".detailContainer.evenBg.baccarat")
     .querySelector(".detailTitle.yellow.Total")
     .parentNode
     .querySelector(".detailValue")
+  zNode.innerText = totalValueNode.innerText;
   let TotalRoundObserver = new MutationObserver(mutations => {
     mutations.forEach(function (mutation) {
       zNode.innerText = mutation.target.innerText;
