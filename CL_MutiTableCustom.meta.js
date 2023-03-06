@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     CL 多台懶人工具
-// @description CL 多台懶人工具
+// @description CL 多台懶人工具..
 // @license MIT
 // @version  0.0.1
 // @include *://www.cali111.net/*
