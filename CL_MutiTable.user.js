@@ -33,27 +33,6 @@ const goDragonFaileThreshold = 1000 * 20;
 var LoginFailedMethod;
 var GoToMutiTableFailedMethod;
 
-const NeedToReloginThreshold = 1000 * 60 * 120;
-/*
-GM_addStyle ( `
-    .MultiTableTableName.tableName {
-       -webkit-font-smoothing: none 
-    }
-` );
-
-function GM_addStyle (cssStr) {
-    var D               = document;
-    var newNode         = D.createElement ('style');
-    newNode.textContent = cssStr;
-
-    var targ    = D.getElementsByTagName ('head')[0] || D.body || D.documentElement;
-    targ.appendChild (newNode);
-}
-*/
-setTimeout(function () {
-  GoLoginPage(null);
-}, NeedToReloginThreshold);
-
 InsertButton();
 document.onreadystatechange = function () {  
   host =unsafeWindow.host;
