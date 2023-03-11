@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.2
+// @version  0.0.3
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*

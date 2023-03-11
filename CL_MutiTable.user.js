@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.2
+// @version  0.0.3
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -16,6 +16,7 @@
 // @include *://www.cali1356a.net/*
 // @include *://www.cali1356b.net/*
 // @grant    GM.xmlHttpRequest
+// @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
 //----------------------------------
 
@@ -27,6 +28,7 @@ var room;
 //----------------------------------
 
 var RefreshObserver = null;
+var ErrorMsgObserver = null;
 
 const loginFaileThreshold = 1000 * 60;
 const goDragonFaileThreshold = 1000 * 20;
@@ -34,11 +36,11 @@ var LoginFailedMethod;
 var GoToMutiTableFailedMethod;
 
 InsertButton();
-document.onreadystatechange = function () {  
-  host =unsafeWindow.host;
-	username =unsafeWindow.username;
-	password =unsafeWindow.password;
-	room =unsafeWindow.room;
+document.onreadystatechange = function () {
+  host = unsafeWindow.host;
+  username = unsafeWindow.username;
+  password = unsafeWindow.password;
+  room = unsafeWindow.room;
   OnWebStateChanged();
 };
 
@@ -143,6 +145,7 @@ function HandleTableWrap(tableWrap) {
       var road = tableWrap.querySelector(".Baccarat8MultiTableRoadmap");
       road.remove();
       StartMonitorTotal(tableWrap);
+      StartMonitorErrorMsg();
     }
   }, 3000);
 }
@@ -152,14 +155,14 @@ function StartMonitorTotal(tableWrap) {
   var tableName = tableWrap.querySelector(".tableName");
   let zNode = document.createElement('div');
   zNode.setAttribute('id', 'myRound');
-	zNode.style.textAlign = 'left';
-  zNode.style.width ='100px'
+  zNode.style.textAlign = 'left';
+  zNode.style.width = '100px'
   zNode.style.left = '41px';
   zNode.style.color = "#FF0000"
-  zNode.style.textAlign= 'center';
+  zNode.style.textAlign = 'center';
   zNode.style.backgroundColor = "#000000"
   zNode.style.fontSize = '44px'
-   
+
   tableName.parentNode.append(zNode);
   let totalValueNode = tableWrap.querySelector(".detailContainer.evenBg.baccarat")
     .querySelector(".detailTitle.yellow.Total")
@@ -179,4 +182,68 @@ function StartMonitorTotal(tableWrap) {
     attributes: true,
     characterData: true,
   });
+}
+
+
+function StartMonitorErrorMsg() {
+  if (ErrorMsgObserver != null) {
+    ErrorMsgObserver.disconnect();
+    ErrorMsgObserver = null;
+  }
+  ErrorMsgObserver = new MutationObserver(mutations => {
+    mutations.forEach(function (mutation) {
+      mutation.addedNodes.forEach(function (n) {
+        TableEventHandleNodeAdded(n);
+      });
+    });
+    mutations.forEach(function (mutation) {
+      mutation.removedNodes.forEach(function (n) {
+        TableEventHandleNodeRemoved(n);
+      });
+    });
+  });
+  ErrorMsgObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: false,
+    characterData: false,
+  });
+}
+
+function TableEventHandleNodeRemoved(n) {
+  if (n === undefined) {
+    return;
+  }
+
+  var popup = n.classList.contains('confirmMessagePopup');
+  if (popup) {
+    setTimeout(function () {
+      console.log('kick out window close, and NavigateToDragon')
+      GoLoginPage(null);
+    }, 2000);
+  }
+}
+function TableEventHandleNodeAdded(n) {
+  if (n === undefined) {
+    return;
+  }
+
+  var popup = n.classList.contains('inTablePopup');
+  var popupMsg = n.classList.contains('confirmMessagePopup');
+
+  if (popup || popupMsg) {
+    console.log('Error message popup');
+
+    setTimeout(function () {
+      const sureBtns = document.getElementsByClassName('confirm');
+      if (sureBtns.length > 0) {
+        console.log('close sure window')
+        var clickSureEvent = document.createEvent('HTMLEvents');
+        clickSureEvent.initEvent('click', true, true);
+        sureBtns[0].dispatchEvent(clickSureEvent);
+      } else
+        console.log('close sure not found')
+    }, 2000);
+
+  }
 }
