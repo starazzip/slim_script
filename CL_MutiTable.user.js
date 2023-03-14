@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.3
+// @version  0.0.4
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -230,20 +230,29 @@ function TableEventHandleNodeAdded(n) {
 
   var popup = n.classList.contains('inTablePopup');
   var popupMsg = n.classList.contains('confirmMessagePopup');
+  var reconnectMsg = n.classList.contains('reconnect');
 
   if (popup || popupMsg) {
     console.log('Error message popup');
 
-    setTimeout(function () {
-      const sureBtns = document.getElementsByClassName('confirm');
-      if (sureBtns.length > 0) {
-        console.log('close sure window')
-        var clickSureEvent = document.createEvent('HTMLEvents');
-        clickSureEvent.initEvent('click', true, true);
-        sureBtns[0].dispatchEvent(clickSureEvent);
-      } else
-        console.log('close sure not found')
-    }, 2000);
+    if (reconnectMsg) {
+      setTimeout(function () {
+        console.log('kick out window close, and NavigateToDragon')
+        GoLoginPage(null);
+      }, 2000);
 
+    } else {
+      setTimeout(function () {
+        const sureBtns = document.getElementsByClassName('confirm');
+        if (sureBtns.length > 0) {
+          console.log('close sure window')
+          var clickSureEvent = document.createEvent('HTMLEvents');
+          clickSureEvent.initEvent('click', true, true);
+          sureBtns[0].dispatchEvent(clickSureEvent);
+        } else
+          console.log('close sure not found')
+      }, 2000);
+    }
   }
 }
+
