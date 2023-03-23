@@ -2,7 +2,7 @@
 // @name     CL 多台設定
 // @description CL 多台的設定
 // @license MIT
-// @version  0.0.2
+// @version  0.0.3
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -22,7 +22,7 @@ var host = "https://www.cali888.net/"
 var username = "6km3g"
 var password = "aaaa8888"
 var room = [' Q001', ' Q002', ' Q003', ' Q004', ' Q005', ' B031', ' B001', ' B002', ' B018', ' B019', ' B301', ' B302', ' B303', ' B304', ' B305'];
-
+var bet = 100;
 
 if (unsafeWindow.host == undefined) {
    unsafeWindow.host = host;
@@ -35,5 +35,8 @@ if (unsafeWindow.password == undefined) {
 }
 if (unsafeWindow.room == undefined) {
    unsafeWindow.room = room;
+}
+if (unsafeWindow.bet == undefined) {
+   unsafeWindow.bet = bet;
 }
 

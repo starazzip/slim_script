@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.4
+// @version  0.0.5
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -24,7 +24,7 @@ var host;
 var username;
 var password;
 var room;
-
+var bet;
 //----------------------------------
 
 var RefreshObserver = null;
@@ -41,6 +41,7 @@ document.onreadystatechange = function () {
   username = unsafeWindow.username;
   password = unsafeWindow.password;
   room = unsafeWindow.room;
+  bet = unsafeWindow.bet;
   OnWebStateChanged();
 };
 
@@ -58,6 +59,7 @@ function InsertButton() {
 
 function OnWebStateChanged() {
   if (document.readyState === 'complete') {
+    ChangeBetListThroughLocalStorage();
     if (RefreshObserver != null) {
       RefreshObserver.disconnect();
       RefreshObserver = null;
@@ -105,7 +107,18 @@ function OnWebStateChanged() {
     });
   }
 }
+function ChangeBetListThroughLocalStorage() {
 
+  let CustomChipDefaultSetting = `{"chip1":{"value":"${(bet - 1) * 100}","isSelected":true},"chip2":{"value":"${(bet) * 100}","isSelected":true},"chip3":{"value":"${(bet + 1) * 100}","isSelected":true},"chip4":{"value":"${(bet + 2) * 100}","isSelected":true},"chip5":{"value":"${(bet + 3) * 100}","isSelected":true}}`;
+  localStorage.setItem("playerTableCustomChip", CustomChipDefaultSetting);
+
+  let ChipSetDefaultSetting = `{"handicapId2":["${(bet - 1) * 100}","${(bet) * 100}","${(bet + 1) * 100}","${(bet + 2) * 100}","${(bet + 3) * 100}"]}`;
+  localStorage.setItem("playerTableChipSet", ChipSetDefaultSetting);
+
+  let VipChipDefaultSetting = '{"handicapId176":["50","100","200","500","1000","2000","5000","10000","20000","50000","100000","200000","500000","1000000","2000000"]}';
+  localStorage.setItem("vipPlayerTableChipSet", VipChipDefaultSetting);
+
+}
 function NavigateToMutiTable() {
   var evt = document.createEvent('HTMLEvents');
   evt.initEvent('click', true, true);
