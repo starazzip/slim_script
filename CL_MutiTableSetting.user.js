@@ -2,7 +2,7 @@
 // @name     CL 多台設定
 // @description CL 多台的設定
 // @license MIT
-// @version  0.0.4
+// @version  0.0.5
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -24,8 +24,8 @@ var username = "帳號"
 var password = "密碼"
 var room = [' Q001', ' Q002', ' Q003', ' Q004', ' Q005', ' B031', ' B001', ' B002', ' B018', ' B019', ' B301', ' B302', ' B303', ' B304', ' B305'];
 var bet = 100;
-var chipCode1 =2;
-var chipCode2 =176;
+var chipCode1 = [2];
+var chipCode2 = 176;
 //------------------------------
 
 if (unsafeWindow.host == undefined) {

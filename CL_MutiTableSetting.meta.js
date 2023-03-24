@@ -2,7 +2,7 @@
 // @name     CL 多台設定
 // @description CL 多台的設定
 // @license MIT
-// @version  0.0.4
+// @version  0.0.5
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*

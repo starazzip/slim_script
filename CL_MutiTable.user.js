@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.6
+// @version  0.0.7
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -113,10 +113,18 @@ function OnWebStateChanged() {
 }
 function ChangeBetListThroughLocalStorage() {
 
+  
   let CustomChipDefaultSetting = `{"chip1":{"value":"${(bet - 1) * 100}","isSelected":true},"chip2":{"value":"${(bet) * 100}","isSelected":true},"chip3":{"value":"${(bet + 1) * 100}","isSelected":true},"chip4":{"value":"${(bet + 2) * 100}","isSelected":true},"chip5":{"value":"${(bet + 3) * 100}","isSelected":true}}`;
   localStorage.setItem("playerTableCustomChip", CustomChipDefaultSetting);
 
-  let ChipSetDefaultSetting = `{"handicapId${chipCode1}":["${(bet - 1) * 100}","${(bet) * 100}","${(bet + 1) * 100}","${(bet + 2) * 100}","${(bet + 3) * 100}"]}`;
+  let ChipSetDefaultSetting = "{"
+  for(i=0;i<chipCode1.length;i++){
+　		ChipSetDefaultSetting+=`"handicapId${chipCode1[i]}":["${(bet - 1) * 100}","${(bet) * 100}","${(bet + 1) * 100}","${(bet + 2) * 100}","${(bet + 3) * 100}"]`;
+    if(i!=chipCode1.length-1)
+      ChipSetDefaultSetting+=",";
+	}
+  ChipSetDefaultSetting+="}";
+  console.log(ChipSetDefaultSetting)
   localStorage.setItem("playerTableChipSet", ChipSetDefaultSetting);
 
   let VipChipDefaultSetting = `{"handicapId${chipCode2}":["50","100","200","500","1000","2000","5000","10000","20000","50000","100000","200000","500000","1000000","2000000"]}`;
