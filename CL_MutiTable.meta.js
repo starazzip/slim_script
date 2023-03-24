@@ -2,7 +2,7 @@
 // @name     CL 多台系統-測試
 // @description CL 多台系統-測試中
 // @license MIT
-// @version  0.0.5
+// @version  0.0.6
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -16,5 +16,6 @@
 // @include *://www.cali1356a.net/*
 // @include *://www.cali1356b.net/*
 // @grant    GM.xmlHttpRequest
+// @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
 //----------------------------------

@@ -2,7 +2,7 @@
 // @name     CL 多台設定
 // @description CL 多台的設定
 // @license MIT
-// @version  0.0.3
+// @version  0.0.4
 // @include *://www.cali999.net/*
 // @include *://www.cali888.net/*
 // @include *://www.cali777.net/*
@@ -16,5 +16,6 @@
 // @include *://www.cali1356a.net/*
 // @include *://www.cali1356b.net/*
 // @grant    none
+// @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
 //----------------------------------
