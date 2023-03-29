@@ -2,7 +2,7 @@
 // @name HS 多台系統
 // @description HS 多台
 // @license MIT
-// @version  0.0.2
+// @version  0.0.3
 // @include *://3scasino.com/*
 // @include *://play.kasar.live/*
 // @grant GM.xmlHttpRequest
@@ -22,7 +22,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
   bet = unsafeWindow.bet;
   betList =unsafeWindow.betList;
   const betIndex =GetBetIndex(bet);
-  window.localStorage.setItem('chips-1-11-s', `'[${betIndex}]'`);
+  window.localStorage.setItem('chips-1-11-s', `[${betIndex}]`);
   OnWebStateChanged()
 });
 function GetBetIndex(chip)
