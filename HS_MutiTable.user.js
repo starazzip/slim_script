@@ -2,7 +2,7 @@
 // @name HS 多台系統
 // @description HS 多台
 // @license MIT
-// @version  0.0.3
+// @version  0.0.4
 // @include *://3scasino.com/*
 // @include *://play.kasar.live/*
 // @grant GM.xmlHttpRequest
@@ -12,6 +12,7 @@ var host;
 var username;
 var password;
 var bet;
+var betCode;
 var betList=[];
 
 InsertButton();
@@ -20,9 +21,10 @@ window.addEventListener("DOMContentLoaded", function (event) {
   username = unsafeWindow.username;
   password = unsafeWindow.password;
   bet = unsafeWindow.bet;
+  betCode = unsafeWindow.betCode;
   betList =unsafeWindow.betList;
   const betIndex =GetBetIndex(bet);
-  window.localStorage.setItem('chips-1-11-s', `[${betIndex}]`);
+  window.localStorage.setItem(`chips-1-${betCode}-s`, `[${betIndex}]`);
   OnWebStateChanged()
 });
 function GetBetIndex(chip)
