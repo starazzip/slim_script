@@ -2,9 +2,8 @@
 // @name HS 多台系統
 // @description HS 多台
 // @license MIT
-// @version  0.0.4
-// @include *://3scasino.com/*
-// @include *://play.kasar.live/*
+// @version  0.0.5
+// @include *
 // @grant GM.xmlHttpRequest
 // @namespace https://greasyfork.org/users/1028078
 // ==/UserScript==
@@ -13,7 +12,7 @@ var username;
 var password;
 var bet;
 var betCode;
-var betList=[];
+var betList = [];
 
 InsertButton();
 window.addEventListener("DOMContentLoaded", function (event) {
@@ -22,16 +21,24 @@ window.addEventListener("DOMContentLoaded", function (event) {
   password = unsafeWindow.password;
   bet = unsafeWindow.bet;
   betCode = unsafeWindow.betCode;
-  betList =unsafeWindow.betList;
-  const betIndex =GetBetIndex(bet);
+  betList = unsafeWindow.betList;
+  const betIndex = GetBetIndex(bet);
   window.localStorage.setItem(`chips-1-${betCode}-s`, `[${betIndex}]`);
+
   OnWebStateChanged()
 });
-function GetBetIndex(chip)
-{
-	var index = betList.indexOf(chip);
-  if(index == -1)
-  {
+
+function SetMutiTableStorage() {
+  var reloadInfo = window.localStorage.getItem('reloadInfo');
+  if (reloadInfo != null) {
+    rj = JSON.parse(reloadInfo);
+    rj.tableName = 'MultipleTable';
+    window.localStorage.setItem('reloadInfo', JSON.stringify(rj));
+  }
+}
+function GetBetIndex(chip) {
+  var index = betList.indexOf(chip);
+  if (index == -1) {
     console.log("Chip index can not find")
     return 0;
   }
@@ -52,6 +59,11 @@ function InsertButton() {
 
 function OnWebStateChanged() {
   setTimeout(function () {
+    if (window.location.href.indexOf('/mobile/') > -1) {
+      window.location.href = window.location.href.replace('/mobile/', '/mobile-flagship/');
+    }
+    SetMutiTableStorage();
+
     const login = document.querySelector("#loginBtn");
     if (login != null) {
       Login();
@@ -65,7 +77,7 @@ function OnWebStateChanged() {
 }
 
 function ButtonClickAction(ev) {
-  window.location.href = host;
+  window.location.href = unsafeWindow.host;
 }
 
 
@@ -107,9 +119,8 @@ function GoMutiTable() {
         var mutiUrl = enterResp["data"]["Data"]["LoginUrl"];
         console.log(mutiUrl);
         window.location.href = mutiUrl;
-      }else
-      {
-      console.log(enterResp);
+      } else {
+        console.log(enterResp);
       }
     },
     onerror: function (error) {
